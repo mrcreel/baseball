@@ -1,23 +1,22 @@
 library("tidyverse")
 library("lubridate")
 
-salary <- read.csv("./data/salary.csv")
+salary <- read.csv("./data/salary.csv", stringsAsFactors = FALSE)
 all_star <- read.csv("./data/all_star.csv")
 master <- read.csv("./data/player.csv") %>%
     unite(birth_date, c(birth_year, birth_month, birth_day), sep = "-") %>%
     mutate(birth_date = ymd(birth_date),
            debut = ymd(debut),
            final_game = ymd(final_game))
-hall_of_fame <- read.csv("./data/hall_of_fame.csv")
+hall_of_fame <- read.csv("./data/hall_of_fame.csv", stringsAsFactors = FALSE)
 
 hof_salary <-inner_join(hall_of_fame %>% 
-                      filter(inducted == "Y") %>%
-                      select(player_id), 
-                  salary) %>%
+                      filter(inducted == "Y"),
+                  salary, by = "player_id") %>%
     mutate(year = as.factor(year))
     
 plot.hof_salary <- ggplot(hof_salary) +
-    geom_boxplot(aes(x = year, y = salary)) + 
+    geom_boxplot(aes(x = factor(year), y = salary)) + 
     scale_y_continuous(labels = scales::dollar,
                        limits = c(0, 35000000))
 
