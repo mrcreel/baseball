@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, out.width='750px', dpi=200)
 ```
 
 ## R Markdown
@@ -23,38 +23,31 @@ team <- read.csv("./data/team.csv")
 head(team)
 ```
 
-**Trim ~~team~~ dataset and add average attendance and seasons variables**
+**Trim _team_ dataset and add average attendance and seasons variables**
 ```{r tbl_team}
 tbl_team <- team %>%
+    group_by(park) %>%
     filter(!is.na(attendance),
            !is.na(ghome),
            park != "") %>%
     select(year:ws_win,
            name:attendance) %>%
-    mutate(avg_attendance = as.integer(attendance / ghome)) %>%
-    as_tibble()
+    mutate(avg_attendance = as.integer(attendance / ghome),
+           seasons = n())
 
 tbl_team
 ```
 
-**Build outlier function**
-
-By <http://stackoverflow.com/users/2572423/jasonaizkalns>
-
-From <http://stackoverflow.com/a/33525389/6269439>
-```{r outlier}
-is_outlier <- function(x) {
-    return(x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x))
-}
-```
-
-
-## Including Plots
+## Attendance Boxplot
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r attendance boxplot, echo=FALSE}
+tbl_team %>% 
+    filter(year >= 1969, seasons > 2) %>%
+    ggplot(., aes(x = factor(park), y = avg_attendance)) +
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
