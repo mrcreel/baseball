@@ -5,12 +5,14 @@ library("stringr")
 players <- read.csv("./data/player.csv", stringsAsFactors = FALSE)
 
 tbl_players <- players %>%
-    mutate(debut = ymd(debut),
-           birth_month = str_pad(birth_month, 2, pad = "0"),
+    filter(debut != "") %>%
+    mutate(birth_month = str_pad(birth_month, 2, pad = "0"),
            birth_day = str_pad(birth_day, 2, pad = "0")) %>%
     unite(name, c(name_first, name_last), sep = " ") %>%
     unite(birth_date, c(birth_year, birth_month, birth_day), sep = "-") %>% 
-    select(player_id, name, birth_date, debut)
+    select(player_id, name, birth_date, debut) %>%
+    mutate(debut = ymd(debut),
+           birth_date = ymd(birth_date))
  
    
 salary <- read.csv("./data/salary.csv", stringsAsFactors = FALSE) 
