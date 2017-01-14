@@ -2,7 +2,7 @@ library("tidyverse")
 library("lubridate")
 
 salary <- read.csv("./data/salary.csv", stringsAsFactors = FALSE)
-all_star <- read.csv("./data/all_star.csv")
+all_star <- read.csv("./data/all_star.csv", stringsAsFactors = FALSE)
 master <- read.csv("./data/player.csv") %>%
     unite(birth_date, c(birth_year, birth_month, birth_day), sep = "-") %>%
     mutate(birth_date = ymd(birth_date),
@@ -21,7 +21,7 @@ plot.hof_salary <- ggplot(hof_salary) +
                        limits = c(0, 35000000))
 
 as_salary <- inner_join(all_star, salary) %>%
-    select(player_id, year, team_id, starting_pos, salary) %>%
+    select(player_id, year, salary) %>%
     mutate(year = as.factor(year))
 
 plot.as_salary <- ggplot(as_salary) +
