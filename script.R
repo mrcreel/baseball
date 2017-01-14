@@ -1,11 +1,8 @@
-library("tidyverse")
-library("lubridate")
-library("stringr")
+source("source.R")
 
 players <- read.csv("./data/player.csv", stringsAsFactors = FALSE)
 
 tbl_players <- players %>%
-    filter(debut != "") %>%
     mutate(birth_month = str_pad(birth_month, 2, pad = "0"),
            birth_day = str_pad(birth_day, 2, pad = "0")) %>%
     unite(name, c(name_first, name_last), sep = " ") %>%
